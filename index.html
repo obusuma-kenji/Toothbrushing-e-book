@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>『歯磨きイヤイヤの本当の原因はママの心にあった！』— eBook (single-file)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #1f2937;
+    --paperA: #fff;
+    --paperB: #f8fafc;
+    --ui: rgba(255,255,255,0.8);
+  }
+  [data-theme="sepia"]{
+    --ink: #3c2f2f;
+    --paperA: #fff4e6;
+    --paperB: #ffefe0;
+    --ui: rgba(255,245,230,0.9);
+  }
+  [data-theme="dark"]{
+    --ink: #e5e7eb;
+    --paperA: #0f1115;
+    --paperB: #121520;
+    --ui: rgba(17,24,39,0.7);
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background: linear-gradient(135deg,var(--paperA),var(--paperB));
+    color: var(--ink); font-family: 'Noto Sans JP', system-ui, -apple-system, Segoe UI, Roboto, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', 'YuGothic', Meiryo, sans-serif;
+  }
+  .noise{position:fixed;inset:0;pointer-events:none;opacity:.05;mix-blend:overlay;background-image:radial-gradient(currentColor 1px,transparent 1px);background-size:12px 12px}
+  header{position:sticky;top:0;z-index:10;backdrop-filter:blur(8px);background:var(--ui);border-bottom:1px solid rgba(255,255,255,.2)}
+  header .bar{max-width:1100px;margin:0 auto;padding:10px 14px;display:flex;gap:8px;align-items:center}
+  header .title{font-weight:700;letter-spacing:.02em}
+  header .spacer{flex:1}
+  button,select,input[type=range]{
+    color:inherit;background:transparent;border:1px solid rgba(255,255,255,.2);
+    padding:6px 10px;border-radius:10px;cursor:pointer
+  }
+  button:hover{background:rgba(255,255,255,.1)}
+  .grid{max-width:1100px;margin:0 auto;padding:18px 14px;display:grid;grid-template-columns:1fr;gap:16px}
+  @media (min-width:960px){ .grid.toc-open{grid-template-columns:280px 1fr} }
+  aside{background:var(--ui);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:12px;max-height:72vh;overflow:auto}
+  .viewer{background:var(--ui);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.1);height:72vh;overflow:hidden;position:relative}
+  .pages{height:100%;display:grid;gap:16px}
+  .pages.spread{grid-template-columns:1fr 1fr}
+  .page{height:100%;border-radius:12px;background:linear-gradient(to bottom right,#fff, #fff);color:#111;overflow:auto;border:1px solid rgba(0,0,0,.05)}
+  [data-theme="dark"] .page{background:linear-gradient(to bottom right,#0b0e14,#12151d);color:#e5e7eb;border-color:#000}
+  [data-theme="sepia"] .page{background:linear-gradient(to bottom right,#fffdf7,#fff5e9)}
+  .page article{white-space:pre-wrap;padding:22px;letter-spacing:.01em;user-select:text}
+  .nav{pointer-events:none;position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center}
+  .nav > div{pointer-events:auto}
+  .round{border-radius:999px;padding:8px 10px;background:transparent}
+  .footer{display:flex;gap:10px;align-items:center;margin-top:10px}
+  .badge{display:inline-block;border:1px solid rgba(255,255,255,.2);padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+  .muted{opacity:.65;font-size:12px}
+</style>
+</head>
+<body data-theme="sepia">
+<div class="noise"></div>
+<header>
+  <div class="bar">
+    <div>📖</div>
+    <div class="title">『歯磨きイヤイヤの本当の原因はママの心にあった！』— eBook (single-file)</div>
+    <div class="spacer"></div>
+
+    <button id="themeBtn" title="テーマ切替">🎨 テーマ</button>
+    <button id="smaller" title="小さく">A−</button>
+    <span class="muted" id="fontSizeView"></span>
+    <button id="bigger" title="大きく">A＋</button>
+
+    <label class="muted" style="margin-left:8px">行間 <input id="lh" type="range" min="1.4" max="2.2" step="0.1" value="1.9" /></label>
+
+    <button id="spreadBtn" title="見開き">🗞 見開き</button>
+    <button id="tocBtn" title="目次">📋 目次</button>
+    <button id="bmBtn" title="ブックマーク">🔖 しおり</button>
+  </div>
+  <div style="height:4px;background:rgba(255,255,255,.2);position:relative">
+    <div id="progressBar" style="height:4px;background:linear-gradient(90deg,#34d399,#06b6d4);width:0%"></div>
+  </div>
+</header>
+
+<div id="grid" class="grid">
+  <aside id="toc" style="display:none">
+    <div class="muted">目次</div>
+    <ul id="tocList" style="list-style:none;padding-left:0"></ul>
+    <div id="bmListWrap" style="margin-top:12px;display:none">
+      <div class="muted">ブックマーク</div>
+      <div id="bmList"></div>
+    </div>
+  </aside>
+
+  <div>
+    <div class="viewer">
+      <div id="pages" class="pages"></div>
+      <div class="nav">
+        <div><button class="round" id="prev">←</button></div>
+        <div><button class="round" id="next">→</button></div>
+      </div>
+    </div>
+    <div class="footer">
+      <span class="muted" id="pageInfo"></span>
+      <input type="range" id="slider" min="0" max="0" value="0" style="flex:1"/>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = {
+    theme: localStorage.getItem('eb3.theme') || 'sepia',
+    font: parseInt(localStorage.getItem('eb3.font') || '18', 10),
+    lh: parseFloat(localStorage.getItem('eb3.lh') || '1.9'),
+    spread: JSON.parse(localStorage.getItem('eb3.spread') || 'true'),
+    page: parseInt(localStorage.getItem('eb3.page') || '0', 10),
+    bm: JSON.parse(localStorage.getItem('eb3.bm') || '[]')
+  };
+
+  const content = '『歯磨きイヤイヤの本当の原因はママの心にあった！』\n\n〜鏡の法則で我が子が変わる「心の磨き方」〜 \n\n【序章】はじめに：終わらない「歯磨き戦争」に、今夜終止符を打ちましょう \n\n毎晩、子どもの寝る時間になると、あなたの心に小さな暗雲が立ち込めるのではないでしょうか。 \n\n「さあ、歯磨きしようね」 \n\nその一言が、今夜の戦いのゴングになることを、あなたは知っているから。 \n\n「イヤだ！」「あとで！」「自分でできる！（でも、やらない）」 \n\n泣き叫ぶ我が子を押さえつけ、無理やり歯ブラシを口に突っ込む。子どもの目には涙、そしてあ\nなたの心には「また怒ってしまった…」という罪悪感と、深い疲労だけが残る…。 \n\n「この子の健康のためなのに、どうして分かってくれないの？」 \n\nそう天を仰いだことは一度や二度ではないはずです。仕上げ磨きで暴れる我が子に、もうヘトヘ\nト。小学生になっても自分からやろうとせず、注意すれば親子喧嘩。見かねて磨いてあげても、\nザッと済ませるだけで磨き残しだらけ…。 \n\nこんにちは。歯科医師であり、フラクタル心理学カウンセラーの〇〇です。 私はこれまで、歯科医\n師として何千人ものお子さんのお口の健康を守ってきましたが、同時に、仕上げ磨きに疲れ果て\nたお母さんたちの悲痛な声も、数え切れないほど聞いてきました。 \n\n「高い歯ブラシも、好きな味の歯磨き粉も試しました」 「歯磨きアプリも、ご褒美シールも、全部や\nりました」 「でも、もう限界です…」 \n\nもし、あなたがこれまでに試したあらゆる方法でうまくいかなかったのだとしたら、それは当然かも\nしれません。なぜなら、問題の本当の根っこは、子どもの「イヤだ」という気持ちや、歯磨きのテク\nニックにはないからです。 \n\n衝撃的なことをお伝えします。 お子さんの歯磨きへの頑なな抵抗は、実はお母さんである、あな\nたの「深層意識」が鏡のように映し出された結果なのです。 \n\n「そんなはずはない！」と思われるかもしれません。ですが、安心してください。これは、あなたを\n責めるためのお話ではありません。むしろ、あなたを長年の苦しみから解放し、お子さんとの関係\nを劇的に改善するための、新しい希望の光です。 \n\nこの本は、歯の磨き方を教える本ではありません。 あなたの心を少し見つめ直し、"心の磨き方"\nを実践することで、お子さんが自ら歯ブラシを手に取るようになる、奇跡のようですが、心理学に\n基づいた確かな方法をお伝えする本です。 \n\nさあ、今夜から「歯磨き戦争」を「親子の笑顔が輝く時間」に変える旅を、一緒に始めましょう。 \n\n\n【第1章】なぜ、うちの子は歯を磨かないの？～あなたの心を映す「鏡」の法則～ \n\n1. 子どもの「イヤ！」は、あなたの心の「イヤ！」 \n\n多くのお母さんが、子どもの歯磨きを「しつけ」の問題だと考えています。しかし、私が専門とする\nフラクタル心理学では、**「目の前の現実は、すべて自分の心の投影である」**という大原則があ\nります。 \n\nこれを**「鏡の法則」**と呼びます。 あなたのお子さんは、まるで高性能な鏡。あなたが普段意識\nしていない、心の奥深く（深層意識）に隠れている感情や思考を、その行動で忠実に映し出して見\nせてくれているのです。 \n\nつまり、お子さんが歯磨きに対して見せる「面倒くさい」「やりたくない」「ママにやられるのはイ\nヤ！」という抵抗。 それは、お母さんであるあなたの心の中に、同じ性質の「イヤ！」が隠れてい\nるという、大切なサインなのです。 \n\n2. 歯磨き拒否に隠された、母親の3つの深層意識 \n\nでは、具体的にどのような「あなたの心」が、子どもの歯磨き拒否として現れるのでしょうか。代表\n的な3つのパターンを見ていきましょう。ご自身の日常を振り返りながら、心当たりがないかチェッ\nクしてみてください。 \n\n● ①「面倒くさがり」な自分 「歯磨きって、正直面倒くさいな…」と心のどこかで思っていませ\nんか？あるいは、歯磨きに限らず、日々の家事や仕事、自分のためのエクササイズや勉\n強に対して「あー、面倒だな」「後回しにしたいな」と感じることはないでしょうか。その小さ\nな「面倒くさがり」のエネルギーを、お子さんは敏感にキャッチし、「歯磨きは面倒なものな\nんだ！」と全身で表現しているのです。 \n● ②「管理・束縛されるのが嫌い」な自分 あなたは、誰かに「こうしなさい」「もっとちゃんと\nやって」と指図されたり、時間を管理されたりするのが、本当は好きではないのではあり\nませんか？「じっとしてて！」「口を開けて！」という仕上げ磨きの時間は、お子さんにとっ\nてはまさに「管理・束縛」そのもの。あなたの「私のやり方で、自由にやりたい」という深層\n意識が、お子さんの「ママにコントロールされたくない！」という抵抗として現れています。 \n● ③「自分の健康管理に無関心」な自分 「子どもの健康は心配だけど、自分のことは後回\nし」。それが、頑張るお母さんの口癖かもしれません。しかし、健康診断を先延ばしにした\nり、自分の食事は残り物で適当に済ませたり、肩こりや疲れを「いつものこと」と放置した\nり…。自分自身の体を大切にメンテナンスすることを軽視するその在り方が、お子さんの\n「歯の健康なんて、どうでもいい！」という態度に繋がっているのです。 \n\n3. 子どもにイライラする時、あなたは「自分」を責めている \n\n「早くしなさい！」と子どもに怒りがこみ上げる時。その怒りの本当の矛先は、お子さんではありま\nせん。 実は、あなた自身の中にある「怠慢な自分」「未熟な自分」に対して、無意識に怒りを感じ\nているのです。 \n\n子どもがダラダラしている姿にイライラするのは、あなたの中の「やるべきことを後回しにする自\n分」を責めたいから。 子どもが適当に磨く姿に腹が立つのは、あなたの中の「物事を中途半端に\n済ませる自分」を正したいから。 \n\n\nお子さんは、あなたが自分自身を成長させるべきポイントを、身をもって教えてくれている、最高\nのメッセンジャーなのです。 \n\n【第2章】魔法の言葉～「命令」を「誓い」に変えるアファメーション・ワーク～ \n\n原因が分かれば、解決はもうすぐです。 この章では、お子さんではなく「あなた自身」を変えるた\nめの、具体的で強力な方法をご紹介します。それは、子どもに言いたい言葉を、すべて「自分に\n向けた言葉」に変換するというワークです。 \n\n1. 「あなた」を「私」に変えるだけ。驚くべき変化が起こる \n\nやり方はとてもシンプルです。 お子さんに怒鳴ってしまいそうになった言葉を、グッとこらえ、主語\nを「私」に変えて心の中で唱えてみましょう。 \n\n実演：「ちゃんと磨きなさい！」→「“私が”ちゃんと磨きなさい」 \n\nどうでしょうか。ドキッとしませんか？ 子どもに言っているつもりの言葉が、実はすべて自分への\nメッセージだったことに、はっきりと気づくはずです。 \n\n● 例1：「いつまでサボってるの！？」 →「“私が”いつまでサボってるの？」 →（気づき）あ\nあ、私は健康のための運動をサボっているな… \n\n● 例2：「もっと丁寧にやりなさい！」 →「“私が”もっと丁寧にやりなさい」 →（気づき）最近、\n仕事や家事が雑になっていたかもしれない… \n\nこの「主語の転換」は、自分の中の問題点を客観的に見つめ、認めるためのパワフルな第一歩\nです。 \n\n2. ネガティブな言葉を「未来を作る誓い」へ \n\n自分へのメッセージに気づけたら、次のステップが最も重要です。 そのネガティブな言葉を、ポジ\nティブで未来志向の「アファメーション（自分への肯定的宣言）」に修正していくのです。これは、あ\nなたの深層意識を書き換えるための、魔法の呪文です。 \n\n【お母さんのための“心の歯磨き”アファメーション】 \n\n子どもに言いがちな\n\n言葉 \n自分へのメッセージ 未来を作るアファメーション \n\n「ちゃんと磨きなさ\n\nい！」 \n私が雑になっている 「私は、自分の心と体を丁寧に扱います」 \n\n「早くやりなさい！」 私がやるべきことを後回\n\nしにしている \n「私は、やるべきことを最適なタイミングで実\n行します」 \n\n\n「サボらないで！」 私が楽な方に流されて\n\nいる \n「私は、自分の健康と未来のために、必要な\n努力を惜しみません」 \n\n「毎日続けなさ\n\nい！」 \n私の継続力が足りない 「私は、価値ある習慣を毎日楽しく続けます」 \n\nこれらのアファメーションを、毎日心の中で唱えたり、手帳に書き出したりしてみてください。あな\nたの深層意識が書き換わると、不思議なことに、鏡であるお子さんの行動が自然と変わり始めま\nす。「早く磨きなさい！」と言わなくても、自分から歯ブラシを持ってくる…そんな嬉しい変化が、必\nず訪れます。 \n\n【第3章】「戦い」から「親子の時間」へ～親こそが最高のお手本～ \n\nあなたの心が整い始めたら、最後は行動です。 「こうしなさい」と100回言葉で言うよりも、あなた\nが1回楽しそうにやって見せる方が、子どもの心には何倍も深く刻まれます。 \n\n1. 「やらせる」から「やりたくなる」魔法の環境づくり \n\n子どもは、親が「楽しそうに」していることを真似したくなる天才です。 今日から、歯磨きを「義務」\nではなく、あなた自身の「楽しいセルフケアタイム」に変えてみましょう。 \n\n● お気に入りの音楽をかけながら、あなたが先に楽しそうに鼻歌まじりで磨く。 \n● 「あ～スッキリした！お口の中がツルツルで気持ちいい！」と、歯磨き後の爽快感を言葉\nに出して、お子さんに聞かせてあげる。 \n\n● 鏡の前で、ニコッと笑って自分の綺麗な歯をチェックする。 \n\nお母さんが楽しそうに、そして自分の体を慈しむように歯を磨く姿は、お子さんにとって何よりの\n生きた教材です。「歯磨きって、気持ちのいいことなんだ」と、言葉ではなく心で理解するようにな\nります。 \n\n2. 歯磨き習慣は、一生ものの「自己管理能力」という贈り物 \n\n考えてみてください。 毎日決まった時間に自分の体を清潔にする「歯磨き習慣」は、自分で自分\nの健康と規律を守る**「自己管理能力」の、人生で最初の素晴らしいトレーニング**です。 \n\nこの力が育てば、将来、学習習慣や健康管理、時間管理など、人生のあらゆる場面で自分を律\nし、目標を達成する力に繋がっていきます。 \n\nあなたが今、自分自身の心と向き合い、生活を整える姿を見せること。 それは、ただ子どもの虫\n歯を防ぐだけでなく、お子さんの人生を豊かにする「一生もののギフト」を贈っているのと同じこと\nなのです。 \n\n子どもに変化を求める前に、まず自分を整える。 自分の健康と心を大切にすることが、巡り巡っ\nて、愛する我が子の未来を輝かせる一番の近道です。 \n\n\n【終章】おわりに：さあ、最高の笑顔で「一緒に」磨こう \n\nここまで読み進めてくださり、本当にありがとうございます。 \n\n子どもの歯磨きという、たった一つの悩み。その入り口から、私たちは自分自身の心を見つめる\nという、深く、そして価値ある旅をしてきました。 \n\nもう、あなたは子どもの行動に一喜一憂し、自分を責める必要はありません。 お子さんが抵抗を\n見せたなら、それは「ママ、心の中に何かメッセージがあるよ」というサイン。そう受け取って、自\n分自身を優しく見つめ直すチャンスにしてください。 \n\nあなたの心が整い、澄み渡っていくほどに、お子さんは驚くほど素直で、穏やかになります。 か\nつて戦場だった洗面所は、親子の笑顔が響き合う、温かいコミュニケーションの場所に変わるで\nしょう。 \n\nあなたの心と歯が輝けば、お子さんの心と歯も、必ず輝きます。 \n\nさあ、この本を閉じて、鏡の前へ。 最高の笑顔で、お子さんにこう声をかけてみてください。 \n\n「ママと一緒に、歯を磨こうか！」 \n\nその一言が、あなたと、そしてお子さんの輝く未来の始まりです。 \n\n著者プロフィール \n\n歯科医師／フラクタル心理学カウンセラー  \n鈴木\u3000さやか \n\n\n\t『歯磨きイヤイヤの本当の原因はママの心にあった！』 \n\t〜鏡の法則で我が子が変わる「心の磨き方」〜 \n\t【序章】はじめに：終わらない「歯磨き戦争」に、今夜終止符を打ちましょう \n\t【第1章】なぜ、うちの子は歯を磨かないの？～あなたの心を映す「鏡」の法則～ \n\t1. 子どもの「イヤ！」は、あなたの心の「イヤ！」 \n\t2. 歯磨き拒否に隠された、母親の3つの深層意識 \n\t3. 子どもにイライラする時、あなたは「自分」を責めている \n\n\t【第2章】魔法の言葉～「命令」を「誓い」に変えるアファメーション・ワーク～ \n\t1. 「あなた」を「私」に変えるだけ。驚くべき変化が起こる \n\t2. ネガティブな言葉を「未来を作る誓い」へ \n\n\t【第3章】「戦い」から「親子の時間」へ～親こそが最高のお手本～ \n\t1. 「やらせる」から「やりたくなる」魔法の環境づくり \n\t2. 歯磨き習慣は、一生ものの「自己管理能力」という贈り物 \n\n\t【終章】おわりに：さあ、最高の笑顔で「一緒に」磨こう \n';
+
+  const pagesEl = document.getElementById('pages');
+  const grid = document.getElementById('grid');
+  const toc = document.getElementById('toc');
+  const tocList = document.getElementById('tocList');
+  const bmListWrap = document.getElementById('bmListWrap');
+  const bmList = document.getElementById('bmList');
+  const pageInfo = document.getElementById('pageInfo');
+  const slider = document.getElementById('slider');
+  const progressBar = document.getElementById('progressBar');
+  const fontSizeView = document.getElementById('fontSizeView');
+
+  function save(){
+    localStorage.setItem('eb3.theme', state.theme);
+    localStorage.setItem('eb3.font', String(state.font));
+    localStorage.setItem('eb3.lh', String(state.lh));
+    localStorage.setItem('eb3.spread', JSON.stringify(state.spread));
+    localStorage.setItem('eb3.page', String(state.page));
+    localStorage.setItem('eb3.bm', JSON.stringify(state.bm));
+  }
+
+  function applyTheme(){ document.body.setAttribute('data-theme', state.theme); }
+  function setFont(delta){ state.font = Math.max(12, Math.min(28, state.font + delta)); renderPages(true); }
+  function setLH(val){ state.lh = Math.max(1.4, Math.min(2.2, val)); renderPages(true); }
+  function toggleSpread(){ state.spread = !state.spread; renderPages(true); }
+  function toggleToc(){ toc.style.display = toc.style.display === 'none' ? 'block' : 'none'; grid.classList.toggle('toc-open'); }
+  function next(){
+    const step = state.spread ? 2 : 1;
+    goTo(state.page + step);
+  }
+  function prev(){
+    const step = state.spread ? 2 : 1;
+    goTo(state.page - step);
+  }
+  function goTo(p){
+    state.page = Math.max(0, Math.min(p, window.__pages.length-1));
+    updateUI();
+  }
+  function toggleBookmark(){
+    const key = state.spread ? Math.floor(state.page/2)*2 : state.page;
+    const idx = state.bm.indexOf(key);
+    if(idx>=0) state.bm.splice(idx,1);
+    else state.bm.push(key);
+    updateBM();
+    save();
+  }
+  function updateBM(){
+    bmListWrap.style.display = state.bm.length ? 'block' : 'none';
+    bmList.innerHTML = '';
+    state.bm.sort((a,b)=>a-b).forEach(p=>{ 
+      const b = document.createElement('button');
+      b.className = 'badge';
+      b.textContent = 'p.'+(p+1);
+      b.onclick = ()=> goTo(p);
+      bmList.appendChild(b);
+    });
+  }
+
+  // TOC detection (supports 【序章】【第1章】…【終章】)
+  function buildTOC(){
+    tocList.innerHTML = '';
+    const lines = content.split(/\n+/);
+    let idx = 0;
+    const re = /^【.*?章】|^著者プロフィール|^『/;
+    lines.forEach(line=>{
+      if(re.test(line)) {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.textContent = line.trim();
+        btn.style.cssText = 'width:100%;text-align:left;padding:6px 8px;border-radius:10px;border:1px solid rgba(255,255,255,.2);margin:4px 0;cursor:pointer;background:transparent';
+        btn.onmouseover = ()=> btn.style.background='rgba(255,255,255,.1)';
+        btn.onmouseout = ()=> btn.style.background='transparent';
+        btn.onclick = ()=>{ 
+          const p = Math.floor(idx / (window.__cpp||800));
+          state.page = state.spread ? p - (p%2) : p;
+          updateUI();
+        };
+        li.appendChild(btn);
+        tocList.appendChild(li);
+      }
+      idx += line.length + 1;
+    });
+  }
+
+  function estimateCPP(){
+    const viewer = pagesEl.parentElement;
+    const width = viewer.clientWidth - 32;
+    const height = viewer.clientHeight - 32;
+    const columns = (state.spread && width >= 900) ? 2 : 1;
+    const pageWidth = width / columns;
+    const linePx = state.font * state.lh;
+    const linesPerPage = Math.max(8, Math.floor(height / linePx));
+    const charsPerLine = Math.max(12, Math.floor(pageWidth / (state.font * 0.95)));
+    const cpp = Math.max(200, Math.floor(linesPerPage * charsPerLine));
+    return cpp;
+  }
+
+  function renderPages(resetPage){
+    applyTheme();
+    pagesEl.className = 'pages' + (state.spread ? ' spread' : '');
+    fontSizeView.textContent = state.font + 'px';
+
+    const cpp = estimateCPP();
+    window.__cpp = cpp;
+    const chunks = [];
+    for(let i=0;i<content.length;i+=cpp) chunks.push(content.slice(i,i+cpp));
+    window.__pages = chunks;
+    if(resetPage) state.page = Math.min(state.page, chunks.length-1);
+
+    updateUI();
+    buildTOC();
+    updateBM();
+  }
+
+  function updateUI(){
+    const chunks = window.__pages || [content];
+    pagesEl.innerHTML = '';
+    if(state.spread){
+      const spreadIndex = Math.floor(state.page/2);
+      const left = chunks[spreadIndex*2] || '';
+      const right = chunks[spreadIndex*2+1] || '';
+      pagesEl.innerHTML = `
+        <div class="page"><article style="font-size:${state.font}px; line-height:${state.lh}">${escapeHTML(left)}</article></div>
+        <div class="page"><article style="font-size:${state.font}px; line-height:${state.lh}">${escapeHTML(right)}</article></div>
+      `;
+      slider.max = Math.max(0, Math.ceil(chunks.length/2)-1);
+      slider.value = spreadIndex;
+      pageInfo.textContent = `ページ ${spreadIndex+1} / ${Math.ceil(chunks.length/2)}`;
+      const progress = ((spreadIndex+1)/Math.max(1,Math.ceil(chunks.length/2)))*100;
+      progressBar.style.width = progress.toFixed(2)+'%';
+    } else {
+      const cur = chunks[state.page] || '';
+      pagesEl.innerHTML = `<div class="page"><article style="font-size:${state.font}px; line-height:${state.lh}">${escapeHTML(cur)}</article></div>`;
+      slider.max = Math.max(0, chunks.length-1);
+      slider.value = state.page;
+      pageInfo.textContent = `ページ ${state.page+1} / ${chunks.length}`;
+      const progress = ((state.page+1)/Math.max(1,chunks.length))*100;
+      progressBar.style.width = progress.toFixed(2)+'%';
+    }
+    save();
+  }
+
+  function escapeHTML(s){
+    return s.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','"':'&quot;'})[c]);
+  }
+
+  // events
+  document.getElementById('themeBtn').onclick = ()=>{
+    const order = ['sepia','light','dark'];
+    const i = order.indexOf(state.theme);
+    state.theme = order[(i+1)%order.length];
+    applyTheme(); save();
+  };
+  document.getElementById('smaller').onclick = ()=> setFont(-1);
+  document.getElementById('bigger').onclick = ()=> setFont(1);
+  document.getElementById('lh').oninput = (e)=> setLH(parseFloat(e.target.value));
+  document.getElementById('spreadBtn').onclick = ()=> toggleSpread();
+  document.getElementById('tocBtn').onclick = ()=> toggleToc();
+  document.getElementById('bmBtn').onclick = ()=> toggleBookmark();
+  document.getElementById('prev').onclick = ()=> prev();
+  document.getElementById('next').onclick = ()=> next();
+  slider.oninput = (e)=> {
+    const v = parseInt(e.target.value, 10);
+    if(state.spread) state.page = v*2; else state.page = v;
+    updateUI();
+  };
+
+  window.addEventListener('resize', ()=> renderPages(false));
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowRight') next();
+    if(e.key === 'ArrowLeft') prev();
+    if(e.key === ' ') { e.preventDefault(); toggleSpread(); }
+  });
+
+  // init
+  applyTheme();
+  document.body.setAttribute('data-theme', state.theme);
+  document.getElementById('lh').value = state.lh;
+  renderPages(false);
+</script>
+</body>
+</html>
